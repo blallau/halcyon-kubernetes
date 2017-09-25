@@ -1,0 +1,60 @@
+---
+
+- name: label mon nodes for ceph
+  shell: "kubectl label nodes {{ item }} ceph-mon=enabled"
+  with_items: "{{ groups['ceph-mon'] }}"
+  ignore_errors: true
+
+- name: label osd nodes for ceph
+  shell: "kubectl label nodes {{ item }} ceph-osd=enabled"
+  with_items: "{{ groups['ceph-osd'] }}"
+  ignore_errors: true
+
+- name: label mds nodes for ceph
+  shell: "kubectl label nodes {{ item }} ceph-mds=enabled"
+  with_items: "{{ groups['ceph-mds'] }}"
+  ignore_errors: true
+
+- name: label rgw nodes for ceph
+  shell: "kubectl label nodes {{ item }} ceph-rgw=enabled"
+  with_items: "{{ groups['ceph-rgw'] }}"
+  ignore_errors: true
+
+#this is temporary
+- name: label nodes for ceph jobs
+  shell: "kubectl label nodes {{ item }} openstack-control-plane=enabled"
+  with_items: "{{ groups['ceph-mon'] }}"
+  ignore_errors: true
+
+- name: clone git repo
+  git:
+    repo: 'https://github.com/openstack/openstack-helm'
+    dest: ./openstack-helm
+
+- name: setup helm
+  shell: "nohup helm serve &"
+  ignore_errors: true
+
+- name: add helm repo
+  shell: "helm repo add local http://localhost:8879/charts"
+
+- name: remove other repos
+  shell: "helm repo remove stable"
+  ignore_errors: true
+
+- name: build charts
+  shell: "(cd openstack-helm ; make)"
+
+- name: deploy ceph into k8s
+  shell: "helm install --namespace=ceph local/ceph --name=ceph --set endpoints.identity.namespace=openstack --set endpoints.object_store.namespace=ceph --set endpoints.ceph_mon.namespace=ceph --set ceph.rgw_keystone_auth=true --set network.public=${OSD_PUBLIC_NETWORK} --set network.cluster=${OSD_CLUSTER_NETWORK} --set deployment.storage_secrets=true --set deployment.ceph=true --set deployment.rbd_provisioner=true --set deployment.client_secrets=false --set deployment.rgw_keystone_user_and_endpoints=false --set bootstrap.enabled=true"
+  register: ceph_deployment_output
+
+- name: debug ceph deployment
+  debug: msg="ceph_deployment_output"
+
+- name: check for ceph to deploy
+  action: shell kubectl get pods --namespace=ceph
+  register: ceph_deployment_progress
+  until: ceph_deployment_progress.stdout.find("0/1") != 1
+  retries: 15
+  delay: 10

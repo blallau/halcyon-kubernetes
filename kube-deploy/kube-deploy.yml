@@ -62,6 +62,14 @@
   tags:
     - kube-sdn
 
+- hosts: kube-masters
+  gather_facts: true
+  become: yes
+  roles:
+    - kube-rbac
+  tags:
+    - kube-rbac
+
 - hosts: kube-control
   gather_facts: true
   become: yes
@@ -69,3 +77,14 @@
     - kube-addons
   tags:
     - kube-addons
+
+- hosts: kube-control
+  gather_facts: true
+  become: yes
+  roles:
+    - deploy-ceph
+  tags:
+    - deploy-ceph
+  environment:
+    OSD_CLUSTER_NETWORK: "{{ osd_cluster_network }}"
+    OSD_PUBLIC_NETWORK: "{{ osd_public_network }}"

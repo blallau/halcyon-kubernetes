@@ -9,3 +9,4 @@ kube-deploy/roles/deploy-docker
 # Development
 .vagrant/
 venv/
+inventory-hosts

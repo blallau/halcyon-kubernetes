@@ -16,5 +16,5 @@
 
 
 - name: join workers to the initialized kubernetes cluster
-  command: "kubeadm join --token {{ init_token }} {{ kube_api_endpoint.stdout }}"
+  command: "kubeadm join --token {{ init_token }} {{ kube_api_endpoint.stdout }}:6443"
   when: inventory_hostname in groups['kube-workers']

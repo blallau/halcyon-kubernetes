@@ -17,20 +17,28 @@
 - name: placeholder for calico
   debug: msg="calico"
 
-- name: placeholder for weave
+- name: placeholder for calico
   debug: msg="starting calico installation"
 
 - name: ensure sdn bootstrap directory exists
-  file: path=/etc/kubernetes/halcyon/network state=directory
+  file: path=/etc/kubernetes/halcyon/sdn state=directory
   when: (kube_sdn_deploy == 'true')
   ignore_errors: true
 
+- name: ensure directory exists for sdn manifests
+  shell: "mkdir -p /etc/kubernetes/halcyon/sdn"
+
+- name: copy calico deployment into host
+  copy:
+    src: templates/calico.yaml
+    dest: ./calico.yaml
+
 - name: deploying calico for kubernetes
-  shell: kubectl apply -f http://docs.projectcalico.org/{{ calico_version }}/getting-started/kubernetes/installation/hosted/kubeadm/calico.yaml
+  shell:  kubectl create -f calico.yaml
   register: deploy_calico
   when: (kube_sdn == 'calico')
   ignore_errors: true
 
-- name: weave deployment stdout
+- name: calico deployment stdout
   debug: msg={{ deploy_calico }}
   ignore_errors: true

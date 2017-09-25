@@ -26,9 +26,12 @@
 - set_fact:
     ansible_python_interpreter: "/usr/bin/python"
 
-- name: upgrade the entire system in preparation for next steps
-  apt: upgrade=full update_cache=yes
+- name: upgrade apt
+  shell: apt-get upgrade
+
+- name: update apt
+  shell: apt-get update
 
 - name: installing ceph
-  shell: apt-get update && apt-get install -y ceph
+  shell: apt-get update && apt-get install -y ceph-common
   when: setup_host_ceph

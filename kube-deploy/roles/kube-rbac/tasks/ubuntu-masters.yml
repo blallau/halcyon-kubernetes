@@ -1,0 +1,16 @@
+
+- name: ensure rbac directory exists
+  shell: "mkdir -p /etc/kubernetes/halcyon/rbac"
+
+- name: copy rbac template
+  copy:
+    src: templates/rbac.yaml
+    dest: /etc/kubernetes/halcyon/rbac/rbac.yaml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: deploy cluster rbac
+  shell: "kubectl update -f /etc/kubernetes/halcyon/rbac/rbac.yaml"
+  ignore_errors: true
+

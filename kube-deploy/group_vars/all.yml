@@ -15,23 +15,25 @@
 #
 ## Deployment Options:
 bootstrap_os: ubuntu
-public_iface: enp0s3
-nat_iface: enp0s3
+public_iface: eth0
+nat_iface: eth0
 proxy_enable: false
+k8s_host: kubeadm
+is_master_schedulable: true
 #
 #
 ## Kubernetes Parameters:
-kubectl_endpoint: kube1
-kubelet_hostname_override: true
+kubectl_endpoint: halcyon-1
+kubelet_hostname_override: false
 init_token: ac7da3.b2cofcda6ab01976
-kube_version: v1.5.4
+kube_version: v1.7.5
 #
 #
 ## Kubernetes SDN Deployment Options:
-kube_cluster_ip_cidr: 10.96.0.0/12
+kube_cluster_ip_cidr: 192.168.0.0/16
 kube_service_dns_domain: cluster.local
 kube_sdn_deploy: true
-kube_sdn: weave
+kube_sdn: calico
 
 #
 ## Kubernetes SDN Versioning:
@@ -47,7 +49,7 @@ kube_addons:
   - kube_helm
 #
 ## Helm Parameters:
-helm_version: v2.1.0
+helm_version: v2.6.1
 #
 ## Docker Daemon Options:
 # Shared mounts is required for several OpenStack Kolla-Kubernetes components.
@@ -61,10 +63,8 @@ docker_insecure_registry: 10.0.2.2:5000
 #
 ## Kolla-Kubernetes addtional options:
 # Setup the host to use the kube-dns nameservers (required for ceph)
-setup_host_kube_dns: false
+setup_host_kube_dns: true
 # Setup the host for ceph
-setup_host_ceph: false
-# Patch kubernetes-controller-manager for ceph PVC support
-# This pulls in quay.io/attcomdev/kube-controller-manager:v1.5.4
-# to replace the upstream image
-patch_kube_ceph: false
+setup_host_ceph: true
+osd_cluster_network: 44.128.124.0/22
+osd_public_network: 44.128.124.0/22
