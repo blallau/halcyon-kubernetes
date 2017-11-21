@@ -11,6 +11,5 @@
     mode: 0644
 
 - name: deploy cluster rbac
-  shell: "kubectl update -f /etc/kubernetes/halcyon/rbac/rbac.yaml"
+  shell: "kubectl replace -f /etc/kubernetes/halcyon/rbac/rbac.yaml"
   ignore_errors: true
-
