@@ -82,7 +82,7 @@
   gather_facts: true
   become: yes
   roles:
-    - deploy-ceph
+    - { role: deploy-ceph, when: setup_host_ceph }
   tags:
     - deploy-ceph
   environment:

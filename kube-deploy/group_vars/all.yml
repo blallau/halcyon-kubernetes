@@ -15,11 +15,11 @@
 #
 ## Deployment Options:
 bootstrap_os: ubuntu
-public_iface: eth0
-nat_iface: eth0
+public_iface: ens4
+nat_iface: ens4
 proxy_enable: false
 k8s_host: kubeadm
-is_master_schedulable: true
+is_master_schedulable: false
 #
 #
 ## Kubernetes Parameters:
@@ -53,18 +53,18 @@ helm_version: v2.6.1
 #
 ## Docker Daemon Options:
 # Shared mounts is required for several OpenStack Kolla-Kubernetes components.
-docker_shared_mounts: false
+docker_shared_mounts: true
 #
 ## Registry Type:
 # Possible values: default, docker_insecure
-registry_type: default
+registry_type: docker_insecure
 # For use with registry_type of docker_insecure
-docker_insecure_registry: 10.0.2.2:5000
+docker_insecure_registry: 10.100.100.1:5000
 #
 ## Kolla-Kubernetes addtional options:
 # Setup the host to use the kube-dns nameservers (required for ceph)
-setup_host_kube_dns: true
+setup_host_kube_dns: false
 # Setup the host for ceph
-setup_host_ceph: true
+setup_host_ceph: false
 osd_cluster_network: 44.128.124.0/22
 osd_public_network: 44.128.124.0/22
