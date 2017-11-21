@@ -23,4 +23,4 @@
   when: (kube_sdn == 'romana')
 
 - include: prep-host-dns.yml
-  when: setup_host_kube_dns
+  when: setup_host_kube_dns | bool

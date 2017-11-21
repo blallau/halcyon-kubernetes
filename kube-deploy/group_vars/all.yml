@@ -62,9 +62,9 @@ registry_type: docker_insecure
 docker_insecure_registry: 10.100.100.1:5000
 #
 ## Kolla-Kubernetes addtional options:
-# Setup the host to use the kube-dns nameservers (required for ceph)
-setup_host_kube_dns: false
 # Setup the host for ceph
 setup_host_ceph: false
 osd_cluster_network: 44.128.124.0/22
 osd_public_network: 44.128.124.0/22
+# Setup the host to use the kube-dns nameservers (required for ceph)
+setup_host_kube_dns: "{{ 'yes' if setup_host_ceph | bool else 'no' }}"
