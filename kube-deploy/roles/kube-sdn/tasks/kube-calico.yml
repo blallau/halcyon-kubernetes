@@ -27,11 +27,11 @@
 
 - name: ensure directory exists for sdn manifests
   file:
-    path: {{ item }}
+    path: "{{ item }}"
     state: directory
   with_items:
-    - "/etc/kubernetes/halcyon/"
-    - "/etc/kubernetes/halcyon/sdn"
+  - "/etc/kubernetes/halcyon/"
+  - "/etc/kubernetes/halcyon/sdn"
 
 - name: copy calico deployment into host
   copy:
