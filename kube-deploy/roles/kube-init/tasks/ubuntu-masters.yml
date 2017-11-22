@@ -76,6 +76,7 @@
 
 - name: debug kubectl output
   debug: msg="{{ remove_taint_output }}"
+  when: is_master_schedulable
 
 # BELOW ARE TWO DEBUGGING OPTIONS:
 #- name: debug kubernetes init output

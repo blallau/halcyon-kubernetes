@@ -26,11 +26,11 @@
 - set_fact:
     ansible_python_interpreter: "/usr/bin/python"
 
-- name: upgrade apt
-  shell: apt-get upgrade
-
-- name: update apt
-  shell: apt-get update
+- name: Update and upgrade apt packages
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400 #One day
 
 - name: installing ceph
   shell: apt-get update && apt-get install -y ceph-common
