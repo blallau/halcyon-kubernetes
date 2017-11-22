@@ -26,7 +26,12 @@
   ignore_errors: true
 
 - name: ensure directory exists for sdn manifests
-  shell: "mkdir -p /etc/kubernetes/halcyon/sdn"
+  file:
+    path: {{ item }}
+    state: directory
+  with_items:
+    - "/etc/kubernetes/halcyon/"
+    - "/etc/kubernetes/halcyon/sdn"
 
 - name: copy calico deployment into host
   copy:
