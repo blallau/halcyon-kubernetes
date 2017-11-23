@@ -18,20 +18,24 @@
   shell: ip addr show {{ public_iface }} | grep "inet\b" | head -n 1 | awk '{print $2}' | cut -d/ -f1
   delegate_to: "{{ item }}"
   delegate_facts: true
+  run_once: true
   with_items: "{{ groups['kube-masters'] }}"
   register: kube_api_endpoint
 
 - name: kubernetes master api endpoints
   debug: var=item.stdout
+  run_once: true
   with_items: "{{ kube_api_endpoint.results }}"
 #  when: inventory_hostname in groups['kube-workers']
 
 - name: setting fact
   set_fact:
     kube_api: "{{ item.stdout }}"
+  run_once: true
   with_items: "{{ kube_api_endpoint.results }}"
 
 - name: debug stdout
+  run_once: true
   debug: msg="{{ kube_api }}"
 
 - name: stat for existing kubelet config
