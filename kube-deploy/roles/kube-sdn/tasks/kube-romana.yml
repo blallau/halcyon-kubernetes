@@ -17,14 +17,6 @@
 - name: romana installation
   debug: msg="starting romana installation"
 
-- name: ensure sdn bootstrap directory exists
-#  file: path=/etc/kubernetes/halcyon/network state=directory
-#  when: kube_sdn_deploy
-#  ignore_errors: true
-  shell: mkdir -p /etc/kubernetes/halcyon/network
-  when: (kube_sdn == 'romana')
-  ignore_errors: true
-
 - name: copy romana template
   template:
     src: templates/romana.j2
@@ -33,11 +25,10 @@
     owner: root
     group: root
     mode: "u=rw,g=r,o=r"
-  when: (kube_sdn == 'romana')
-  ignore_errors: true
 
 - name: deploying romana for kubernetes
   shell: kubectl apply -f /etc/kubernetes/halcyon/network/romana.yml
   register: deploy_weave
-  when: (kube_sdn == 'romana')
-  ignore_errors: true
+
+- name: romana deployment stdout
+  debug: msg={{ deploy_romana }}

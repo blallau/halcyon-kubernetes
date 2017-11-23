@@ -118,7 +118,13 @@
     sdn_deployed: false
   when: sdn_deployed is undefined
 
-
+- name: ensure directory exists for network manifests
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+  - "/etc/kubernetes/halcyon/"
+  - "/etc/kubernetes/halcyon/network"
 
 #Run SDN Specific Playbooks only if no SDN is installed. Installs SDN based on group_vars/all
 - name: deploy weave
@@ -154,4 +160,3 @@
     owner: root
     group: root
   when: (kube_sdn_deploy) and (sdn_exists.stat.exists == 'false')
-  ignore_errors: true

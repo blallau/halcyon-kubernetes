@@ -14,36 +14,17 @@
 # limitations under the License.
 #
 
-- name: placeholder for calico
-  debug: msg="calico"
-
-- name: placeholder for calico
+- name: calico installation
   debug: msg="starting calico installation"
 
-- name: ensure sdn bootstrap directory exists
-  file: path=/etc/kubernetes/halcyon/sdn state=directory
-  when: (kube_sdn_deploy == 'true')
-  ignore_errors: true
-
-- name: ensure directory exists for sdn manifests
-  file:
-    path: "{{ item }}"
-    state: directory
-  with_items:
-  - "/etc/kubernetes/halcyon/"
-  - "/etc/kubernetes/halcyon/sdn"
-
-- name: copy calico deployment into host
+- name: copy calico template
   copy:
     src: templates/calico.yaml
-    dest: ./calico.yaml
+    dest: /etc/kubernetes/halcyon/network/calico.yaml
 
 - name: deploying calico for kubernetes
-  shell:  kubectl create -f calico.yaml
+  shell:  kubectl create -f /etc/kubernetes/halcyon/network/calico.yaml
   register: deploy_calico
-  when: (kube_sdn == 'calico')
-  ignore_errors: true
 
 - name: calico deployment stdout
   debug: msg={{ deploy_calico }}
-  ignore_errors: true

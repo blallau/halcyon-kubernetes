@@ -54,33 +54,16 @@
     host_arch: "amd64"
   when: host_arch is undefined
 
-- name: ensure sdn bootstrap directory exists
-  file:
-    path: /etc/kubernetes/halcyon/network
-    state: directory
-  when: kube_sdn_deploy == True
-  ignore_errors: true
-
 - name: deploying flannel for kubernetes - x86_64
   shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
   register: deploy_flannel
-  when: kube_sdn == 'flannel' and host_arch == "amd64"
-  ignore_errors: true
+  when: host_arch == "amd64"
 
 - name: deploying flannel for kubernetes - Alternative Architectures
   shell: curl -sSL https://rawgit.com/coreos/flannel/master/Documentation/kube-flannel.yml | sed "s/amd64/{{ host_arch }}/g" | kubectl create -f -
-  register: deploy_flannel_alt_arch
-  when: kube_sdn == 'flannel' and host_arch != "amd64"
-  ignore_errors: true
+  register: deploy_flannel
+  when: host_arch != "amd64"
 
 - name: flannel deployment stdout
   debug:
     msg: "{{ deploy_flannel }}"
-  ignore_errors: true
-  when: host_arch == "amd64"
-
-- name: flannel deployment stdout
-  debug:
-    msg: "{{ deploy_flannel_alt_arch }} for architecture: {{ host_arch }}"
-  ignore_errors: true
-  when: host_arch != "amd64"
