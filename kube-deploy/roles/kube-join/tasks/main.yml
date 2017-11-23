@@ -46,3 +46,7 @@
 - name: join workers to the initialized kubernetes cluster
   shell: "kubeadm join --token {{ init_token }} {{ kube_api }}:6443"
   when: inventory_hostname in groups['kube-workers'] and worker_kubelet.stat.exists == false
+
+- pause:
+    prompt: "Make sure kubectl work"
+  when: debug_kubectl

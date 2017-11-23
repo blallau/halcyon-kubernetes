@@ -19,7 +19,6 @@
 - name: check for an existing sdn deployment
   shell: kubectl get pods -o wide --all-namespaces
   register: kube_podlist
-  ignore_errors: true
 
 - name: stat for existing sdn deployment
   stat:
@@ -30,7 +29,6 @@
   shell: kubectl get pods -o wide --all-namespaces
   when: kube_podlist.stdout | search("weave")
   register: sdn_deployed_weave
-  ignore_errors: true
 
 
 #Testing to see which SDN's are currently installed, if any.
@@ -49,7 +47,6 @@
   shell: kubectl get pods -o wide --all-namespaces
   when: kube_podlist.stdout | search("calico")
   register: sdn_deployed_calico
-  ignore_errors: true
 
 - name: set Fact when calico is deployed
   set_fact:
@@ -66,7 +63,6 @@
   shell: kubectl get pods -o wide --all-namespaces
   when: kube_podlist.stdout | search("canal")
   register: sdn_deployed_canal
-  ignore_errors: true
 
 - name: set fact when canal is deployed
   set_fact:
@@ -83,7 +79,6 @@
   shell: kubectl get pods -o wide --all-namespaces
   when: kube_podlist.stdout | search("romana")
   register: sdn_deployed_romana
-  ignore_errors: true
 
 - name: set fact when romana is deployed
   set_fact:
@@ -100,7 +95,6 @@
   shell: kubectl get pods -o wide --all-namespaces
   when: kube_podlist.stdout | search("flannel")
   register: sdn_deployed_flannel
-  ignore_errors: true
 
 - name: set Fact when flannel is deployed
   set_fact:
@@ -159,4 +153,8 @@
     backup: no
     owner: root
     group: root
-  when: (kube_sdn_deploy) and (sdn_exists.stat.exists == 'false')
+  when: kube_sdn_deploy and not sdn_exists.stat.exists
+
+- pause:
+    prompt: "Make sure kubectl work"
+  when: debug_kubectl

@@ -16,3 +16,7 @@
 
 - include: addons-dashboard.yml
 - include: addons-helm.yml
+
+- pause:
+    prompt: "Make sure kubectl work"
+  when: debug_kubectl

@@ -1,7 +1,7 @@
 
 - name: ensure rbac directory exists
   file:
-    path: {{ item }}
+    path: "{{ item }}"
     state: directory
   with_items:
     - "/etc/kubernetes/halcyon/"
@@ -21,3 +21,7 @@
 
 - name: rbac deployment stdout
   debug: msg={{ deploy_rbac }}
+
+- pause:
+    prompt: "Make sure kubectl work"
+  when: debug_kubectl

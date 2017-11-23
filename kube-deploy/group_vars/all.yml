@@ -20,6 +20,9 @@ nat_iface: ens4
 proxy_enable: false
 k8s_host: kubeadm
 is_master_schedulable: false
+upgrade_os_enable: true
+debug_kubectl: false
+
 #
 #
 ## Kubernetes Parameters:
