@@ -46,6 +46,10 @@
   when: "'was refused' in kube_bootstrap.stderr and kube_sdn == 'flannel'"
   register: initout
 
+- pause:
+    prompt: "Make sure kubectl work"
+  when: debug_kubectl
+
 - name: check kubectl after initializing the kubernetes master
   shell: kubectl get nodes
   register: kube_bootstrap
@@ -69,7 +73,6 @@
   shell: "kubectl taint node $(hostname) node-role.kubernetes.io/master:NoSchedule-"
   when: is_master_schedulable
   register: remove_taint_output
-  ignore_errors: true
 
 - name: debug kubectl output
   debug: msg="{{ remove_taint_output }}"
