@@ -17,9 +17,7 @@
 - name: deploying helm tool
   shell: curl -L http://storage.googleapis.com/kubernetes-helm/helm-{{ helm_version }}-linux-amd64.tar.gz | tar zxv --strip 1 -C /tmp; chmod +x /tmp/helm; mv /tmp/helm /usr/local/bin/helm
   when: kube_addons_enabled and kube_addons.kube_helm is defined
-  ignore_errors: true
 
 - name: initializing helm deployment
   command: /usr/local/bin/helm init
   when: kube_addons_enabled and kube_addons.kube_helm is defined
-  ignore_errors: true

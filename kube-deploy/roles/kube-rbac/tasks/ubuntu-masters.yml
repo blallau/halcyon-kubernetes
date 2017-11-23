@@ -1,6 +1,11 @@
 
 - name: ensure rbac directory exists
-  shell: "mkdir -p /etc/kubernetes/halcyon/rbac"
+  file:
+    path: {{ item }}
+    state: directory
+  with_items:
+    - "/etc/kubernetes/halcyon/"
+    - "/etc/kubernetes/halcyon/rbac"
 
 - name: copy rbac template
   copy:
@@ -12,4 +17,7 @@
 
 - name: deploy cluster rbac
   shell: "kubectl replace -f /etc/kubernetes/halcyon/rbac/rbac.yaml"
-  ignore_errors: true
+  register: deploy_rbac
+
+- name: rbac deployment stdout
+  debug: msg={{ deploy_rbac }}

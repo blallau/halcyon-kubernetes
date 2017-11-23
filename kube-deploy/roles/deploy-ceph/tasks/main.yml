@@ -40,7 +40,6 @@
 
 - name: remove other repos
   shell: "helm repo remove stable"
-  ignore_errors: true
 
 - name: build charts
   shell: "(cd openstack-helm ; make)"
