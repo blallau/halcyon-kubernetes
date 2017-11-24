@@ -14,15 +14,6 @@
 # limitations under the License.
 #
 
-- name: check for bootstrap
-  shell: kubectl get nodes
-  register: kube_bootstrap
-  failed_when: false
-  ignore_errors: true
-
-- name: debug bootstrap output
-  debug: msg="{{ kube_bootstrap }}"
-
 - name: collect api endpoint from masters
   shell: ip addr show {{ public_iface }} | grep "inet\b" | head -n 1 | awk '{print $2}' | cut -d/ -f1
   register: kube_api_endpoint
@@ -31,24 +22,44 @@
   debug: msg={{ kube_api_endpoint.stdout }}
 
 - name: initialize the kubernetes master
-  shell: "kubeadm init --token={{ init_token }} --kubernetes-version={{ kube_version }}"
+  become: yes
+  shell: "kubeadm init --token={{ init_token }} --kubernetes-version={{ kube_version }} {{insecure_api_opts}}"
   when: "'was refused' in kube_bootstrap.stderr and kube_sdn != 'flannel' and kube_sdn != 'calico'"
   register: initout
 
 - name: initialize the kubernetes master for calico
-  shell: "kubeadm init --token={{ init_token }} --kubernetes-version={{ kube_version }} --pod-network-cidr={{ kube_cluster_ip_cidr }}"
+  become: yes
+  shell: "kubeadm init --token={{ init_token }} --kubernetes-version={{ kube_version }} --pod-network-cidr={{ kube_cluster_ip_cidr }} {{insecure_api_opts}}"
   when: "'was refused' in kube_bootstrap.stderr and kube_sdn == 'calico'"
   register: initout
 
 # The pod network CIDR is hardcoded in the reference flannel CNI templates
 - name: initialize the kubernetes master for flannel
-  shell: "kubeadm init --token={{ init_token }} --use-kubernetes-version={{ kube_version }} --api-advertise-addresses={{ kube_api_endpoint.stdout }} --pod-network-cidr={{ kube_cluster_ip_cidr }}"
+  become: yes
+  shell: "kubeadm init --token={{ init_token }} --use-kubernetes-version={{ kube_version }} --api-advertise-addresses={{ kube_api_endpoint.stdout }} --pod-network-cidr={{ kube_cluster_ip_cidr }} {{insecure_api_opts}}"
   when: "'was refused' in kube_bootstrap.stderr and kube_sdn == 'flannel'"
   register: initout
 
-- pause:
-    prompt: "Make sure kubectl work"
-  when: debug_kubectl
+- name: display kubeadm config
+  become: yes
+  shell: "kubeadm config view"
+  register: kubeadm_config
+
+- name: debug kubeadm config
+  debug: msg="{{ kubeadm_config }}"
+
+- name: make kubeconfig directory
+  file:
+    path: $HOME/.kube
+    state: directory
+
+- name: copy kubeconfig
+  become: yes
+  shell: "cp /etc/kubernetes/admin.conf $HOME/.kube/config"
+
+- name: change permissions on kubeconfig
+  become: yes
+  shell: "chown $(id -u):$(id -g) $HOME/.kube/config"
 
 - name: check kubectl after initializing the kubernetes master
   shell: kubectl get nodes
@@ -58,17 +69,6 @@
 - name: debug kubectl output
   debug: msg="{{ kube_bootstrap }}"
 
-- name: make kubeconfig directory
-  file:
-    path: $HOME/.kube
-    state: directory
-
-- name: copy kubeconfig
-  shell: "cp /etc/kubernetes/admin.conf $HOME/.kube/config"
-
-- name: change permissions on kubeconfig
-  shell: "chown $(id -u):$(id -g) $HOME/.kube/config"
-
 - name: remove NoSchedule taint from master
   shell: "kubectl taint node $(hostname) node-role.kubernetes.io/master:NoSchedule-"
   when: is_master_schedulable
@@ -77,11 +77,3 @@
 - name: debug kubectl output
   debug: msg="{{ remove_taint_output }}"
   when: is_master_schedulable
-
-# BELOW ARE TWO DEBUGGING OPTIONS:
-#- name: debug kubernetes init output
-#  debug: msg="{{ initout }}"
-
-#- name: printing initialization output for user
-#  debug: msg="{{ initout.stdout }}"
-#  ignore_errors: true

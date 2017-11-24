@@ -113,6 +113,7 @@
   when: sdn_deployed is undefined
 
 - name: ensure directory exists for network manifests
+  become: yes
   file:
     path: "{{ item }}"
     state: directory
@@ -147,6 +148,7 @@
 
 
 - name: creating sdn deployment artifact
+  become: yes
   template:
     src: templates/bootstrap-sdn.j2
     dest: /etc/kubernetes/halcyon/network/.bootstrapped
@@ -156,5 +158,5 @@
   when: kube_sdn_deploy and not sdn_exists.stat.exists
 
 - pause:
-    prompt: "Make sure kubectl work"
+    prompt: "Make sure SDN work"
   when: debug_kubectl

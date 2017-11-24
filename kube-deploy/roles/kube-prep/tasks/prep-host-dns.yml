@@ -43,13 +43,16 @@
   with_items: "{{ external_dns_ip.results }}"
 
 - name: telling network manager to leave resolv.conf alone
+  become: yes
   shell: sed -i '/\[main\]/adns=none' /etc/NetworkManager/NetworkManager.conf
   when: bootstrap_os == "centos"
 
 - name: disabling resolvconf
+  become: yes
   shell: rm -f /etc/resolv.conf && cp /run/resolvconf/resolv.conf /etc/resolv.conf
   when: bootstrap_os == "ubuntu"
 
 # Setup the host's resolve conf to use the k8s dns server
 - name: setting up host resolve conf to use kube dns
+  become: yes
   template: src="resolv.conf.j2" dest="/etc/resolv.conf" mode=0644

@@ -1,5 +1,6 @@
 
 - name: ensure rbac directory exists
+  become: yes
   file:
     path: "{{ item }}"
     state: directory
@@ -8,6 +9,7 @@
     - "/etc/kubernetes/halcyon/rbac"
 
 - name: copy rbac template
+  become: yes
   copy:
     src: templates/rbac.yaml
     dest: /etc/kubernetes/halcyon/rbac/rbac.yaml
@@ -23,5 +25,5 @@
   debug: msg={{ deploy_rbac }}
 
 - pause:
-    prompt: "Make sure kubectl work"
+    prompt: "Make sure RBAC is in place"
   when: debug_kubectl

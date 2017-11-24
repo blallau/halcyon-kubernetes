@@ -18,5 +18,5 @@
 - include: addons-helm.yml
 
 - pause:
-    prompt: "Make sure kubectl work"
+    prompt: "Make sure dashboard and Helm addons work"
   when: debug_kubectl

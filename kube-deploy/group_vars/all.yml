@@ -22,6 +22,8 @@ k8s_host: kubeadm
 is_master_schedulable: false
 upgrade_os_enable: true
 debug_kubectl: false
+insecure_api_enabled: false
+insecure_api_opts: "{{ '--insecure-bind-address=0.0.0.0 --insecure-port=8080' if insecure_api_enabled | bool else '' }}"
 
 #
 #
