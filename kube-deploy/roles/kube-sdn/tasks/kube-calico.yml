@@ -18,6 +18,7 @@
   debug: msg="starting calico installation"
 
 - name: copy calico template
+  become: yes
   copy:
     src: templates/calico.yaml
     dest: /etc/kubernetes/halcyon/network/calico.yaml

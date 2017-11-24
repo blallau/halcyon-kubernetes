@@ -86,3 +86,7 @@
     name: kubelet
     state: restarted
   when: kho.changed
+
+- pause:
+    prompt: "After kubeadm install"
+  when: debug_kubectl
