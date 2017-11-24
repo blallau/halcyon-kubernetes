@@ -121,31 +121,28 @@
   - "/etc/kubernetes/halcyon/"
   - "/etc/kubernetes/halcyon/network"
 
-#Run SDN Specific Playbooks only if no SDN is installed. Installs SDN based on group_vars/all
+# URL to update
 - name: deploy weave
   import_tasks: "kube-weave.yml"
   when: kube_sdn_deploy and weave_deployed == false and sdn_deployed == false and kube_sdn == "weave"
 
-
+# URL to update
 - name: deploy calico
   import_tasks: "kube-calico.yml"
   when: kube_sdn_deploy and calico_deployed == false and sdn_deployed == false and kube_sdn == "calico"
-
 
 - name: deploy canal
   import_tasks: "kube-canal.yml"
   when: kube_sdn_deploy and canal_deployed == false and sdn_deployed == false and kube_sdn == "canal"
 
-
+# URL to update
 - name: deploy romana
   import_tasks: "kube-romana.yml"
   when: kube_sdn_deploy and romana_deployed == false and sdn_deployed == false and kube_sdn == "romana"
 
-
 - name: deploy flannel
   import_tasks: "kube-flannel.yml"
   when: kube_sdn_deploy and flannel_deployed == false and sdn_deployed == false and kube_sdn == "flannel"
-
 
 - name: creating sdn deployment artifact
   become: yes
@@ -158,5 +155,5 @@
   when: kube_sdn_deploy and not sdn_exists.stat.exists
 
 - pause:
-    prompt: "Make sure SDN work"
+    prompt: "Make sure SDN solution is deployed"
   when: debug_kubectl

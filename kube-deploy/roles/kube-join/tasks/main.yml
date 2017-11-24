@@ -49,5 +49,5 @@
   when: inventory_hostname in groups['kube-workers'] and worker_kubelet.stat.exists == false
 
 - pause:
-    prompt: "Make sure nodes are added work"
+    prompt: "Make sure added nodes work"
   when: debug_kubectl

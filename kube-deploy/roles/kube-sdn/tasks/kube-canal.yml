@@ -18,7 +18,7 @@
   debug: msg="starting canal installation"
 
 - name: deploying canal for kubernetes
-  shell: kubectl create -f https://raw.githubusercontent.com/tigera/canal/master/k8s-install/kubeadm/canal.yaml
+  shell: kubectl create -f https://raw.githubusercontent.com/tigera/canal/master/k8s-install/1.7/canal.yaml
   register: deploy_canal
 
 - name: canal deployment stdout
