@@ -1,5 +1,4 @@
 ---
 
-- include: scenarios/kubeadm.yml
+- import_tasks: "scenarios/kubeadm.yml"
   when: k8s_host == "kubeadm"
-

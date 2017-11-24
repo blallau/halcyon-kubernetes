@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-- include: ubuntu.yml
+- import_tasks: "ubuntu.yml"
   when: bootstrap_os == "ubuntu"
 
-- include: centos.yml
+- import_tasks: "centos.yml"
   when: bootstrap_os == "centos"

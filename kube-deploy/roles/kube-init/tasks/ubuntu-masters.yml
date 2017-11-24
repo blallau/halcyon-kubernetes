@@ -59,7 +59,10 @@
 
 - name: change permissions on kubeconfig
   become: yes
-  shell: "chown $(id -u):$(id -g) $HOME/.kube/config"
+  file:
+    path: "{{ ansible_user_dir }}/.kube/config"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
 - name: check kubectl after initializing the kubernetes master
   shell: kubectl get nodes

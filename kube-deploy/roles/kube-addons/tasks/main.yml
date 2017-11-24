@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-- include: addons-dashboard.yml
-- include: addons-helm.yml
+- import_tasks: "addons-dashboard.yml"
+- import_tasks: "addons-helm.yml"
 
 - pause:
     prompt: "Make sure dashboard and Helm addons work"

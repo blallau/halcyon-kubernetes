@@ -18,8 +18,8 @@
   shell: ip route add {{ kube_cluster_ip_cidr }} dev {{ public_iface }}
   when: not (public_iface == nat_iface)
 
-- include: prep-romana.yml
+- import_tasks: "prep-romana.yml"
   when: (kube_sdn == 'romana')
 
-- include: prep-host-dns.yml
+- import_tasks: "prep-host-dns.yml"
   when: setup_host_kube_dns | bool

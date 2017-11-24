@@ -1,4 +1,3 @@
 ---
 
-- include: ubuntu-masters.yml
-
+- import_tasks: "ubuntu-masters.yml"
